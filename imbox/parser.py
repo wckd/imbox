@@ -79,7 +79,7 @@ def parse_attachment(message_part):
         dispositions = content_disposition.strip().split(";")
        
         if dispositions[0].lower() in ["attachment", "inline"]: 
-            file_data = message_part.get_payload(decode=True)
+            file_data = message_part.get_payload(decode=True) or message_part.get_payload()
 
             attachment = {
                 'content-type': message_part.get_content_type(),
