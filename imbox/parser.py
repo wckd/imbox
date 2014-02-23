@@ -72,13 +72,12 @@ def decode_param(param):
         return None 
 
 
-
 def parse_attachment(message_part):
     content_disposition = message_part.get("Content-Disposition", None) # Check again if this is a valid attachment
     if content_disposition != None:
         dispositions = content_disposition.strip().split(";")
-       
-        if dispositions[0].lower() in ["attachment", "inline"]: 
+        
+        if dispositions[0].lower() in ["attachment"]:
             file_data = message_part.get_payload(decode=True)
 
             attachment = {
@@ -87,21 +86,18 @@ def parse_attachment(message_part):
                 'content': StringIO.StringIO(file_data)
             }
 
-            
             for param in dispositions[1:]:
-                if param:
-                    name, value = decode_param(param)
+                name, value = decode_param(param)
 
-
-                    if 'file' in  name:
-                        attachment['filename'] = value
+                if 'file' in  name:
+                    attachment['filename'] = value
                 
-                    if 'create-date' in name:
-                        attachment['create-date'] = value
+                if 'create-date' in name:
+                    attachment['create-date'] = value
             
-                return attachment
+            return attachment
 
-    return None 
+    return None
 
 def parse_email(raw_email):
     is_dict = True
@@ -153,7 +149,7 @@ def parse_email(raw_email):
             i = 'undisclosed@recipients.com'
     parsed_email['cc'] = email_message.get_all('cc')
 
-    value_headers_keys = ['Subject', 'Date','Message-ID', 'Message-Id', 'message-id']
+    value_headers_keys = ['Subject', 'Date','Message-ID', 'Message-Id', 'message-id', 'Message-id']
     key_value_header_keys = ['Received-SPF', 
                             'MIME-Version',
                             'X-Spam-Status',
